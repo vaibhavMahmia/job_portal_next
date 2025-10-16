@@ -8,6 +8,13 @@
       "when": 1759667104481,
       "tag": "0000_short_patriot",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1760627353795,
+      "tag": "0001_dizzy_bastion",
+      "breakpoints": true
     }
   ]
 }

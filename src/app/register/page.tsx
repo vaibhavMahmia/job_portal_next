@@ -19,6 +19,7 @@ import { Eye, EyeOff, Lock, Mail, User, UserCheck } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { registrationAction } from "./registrationAction.action";
 
 interface RegistrationFormData {
     name: string;
@@ -49,13 +50,20 @@ const RegisterPage: React.FC = () => {
         }));
     };
 
-    console.log(formData);
+    const handleSubmit = async (e: FormEvent) => {
+        e.preventDefault();
 
-    const handleSubmit = (e: FormEvent) => {
-        try {
-        } catch (error) { }
+        const registrationData = {
+            name: formData.name.trim(),
+            userName: formData.userName.trim(),
+            email: formData.email.toLowerCase().trim(),
+            password: formData.password,
+            role: formData.role,
+        };
+
+        await registrationAction(registrationData);
     };
-    
+
     return <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
             <CardHeader className="text-center">
@@ -75,6 +83,7 @@ const RegisterPage: React.FC = () => {
                             <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                             <Input
                                 id="name"
+                                name="name"
                                 type="text"
                                 placeholder="Enter your full name"
                                 required
@@ -94,6 +103,7 @@ const RegisterPage: React.FC = () => {
                             <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                             <Input
                                 id="userName"
+                                name="userName"
                                 type="text"
                                 placeholder="Choose a username"
                                 required
@@ -113,6 +123,7 @@ const RegisterPage: React.FC = () => {
                             <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                             <Input
                                 id="email"
+                                name="email"
                                 type="email"
                                 placeholder="Enter your email"
                                 required
@@ -129,6 +140,7 @@ const RegisterPage: React.FC = () => {
                     <div className="space-y-2 w-full">
                         <Label htmlFor="role">I am a *</Label>
                         <Select
+                            name="role"
                             value={formData.role}
                             onValueChange={(value: "applicant" | "employer") =>
                                 handleInputChange("role", value)
@@ -151,6 +163,7 @@ const RegisterPage: React.FC = () => {
                             <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                             <Input
                                 id="password"
+                                name="password"
                                 type={showPassword ? "text" : "password"}
                                 placeholder="Create a strong password"
                                 required
@@ -184,6 +197,7 @@ const RegisterPage: React.FC = () => {
                             <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                             <Input
                                 id="confirmPassword"
+                                name="confirmPassword"
                                 type={showConfirmPassword ? "text" : "password"}
                                 placeholder="Confirm your password"
                                 required
