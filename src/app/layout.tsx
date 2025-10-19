@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+// @ts-ignore: side-effect CSS import has no module/type declarations; add a global declaration file (e.g. src/types/global.d.ts) to properly type this
 import "./globals.css";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,6 +24,7 @@ const RootLayout = ({ children }: Readonly<{ children: React.ReactNode; }>) => <
     className={`${geistSans.variable} ${geistMono.variable} antialiased`}
   >
     {children}
+    <Toaster position="top-right" richColors />
   </body>
 </html>;
 

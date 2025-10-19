@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { registrationAction } from "./registrationAction.action";
+import { toast } from "sonner";
 
 interface RegistrationFormData {
     name: string;
@@ -60,8 +61,18 @@ const RegisterPage: React.FC = () => {
             password: formData.password,
             role: formData.role,
         };
-
-        await registrationAction(registrationData);
+        if (formData.password !== formData.confirmPassword) return toast.warning('Passwords are not matching!');
+        const { status, message } = await registrationAction(registrationData);
+        if (status === 'success') toast.success(message);
+        else toast.error(message);
+        setFormData({
+            name: '',
+            userName: '',
+            email: '',
+            password: '',
+            confirmPassword: '',
+            role: 'applicant'
+        });
     };
 
     return <div className="min-h-screen bg-background flex items-center justify-center p-4">
