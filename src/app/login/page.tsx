@@ -1,4 +1,5 @@
-'use client';
+"use client";
+
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
@@ -8,37 +9,37 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Eye, EyeOff, Lock, Mail, User, UserCheck } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail, UserCheck } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { loginUserAction } from "@/features/auth/server/auth.actions";
+import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { LoginUserData, loginUserSchema } from "@/features/auth/auth.schema";
 
-interface LoginFormData {
-    email: string;
-    password: string;
-}
-
-const LoginPage: React.FC = () => {
-    const [formData, setFormData] = useState<LoginFormData>({
-        email: '',
-        password: '',
+const LoginForm: React.FC = () => {
+    const {
+        register,
+        handleSubmit,
+        watch,
+        formState: { errors },
+    } = useForm({
+        resolver: zodResolver(loginUserSchema),
     });
 
     const [showPassword, setShowPassword] = useState(false);
-    const handleInputChange = (name: string, value: string) => {
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
 
-    console.log(formData);
-
-    const handleSubmit = (e: FormEvent) => {
+    const onSubmit = async (data: LoginUserData) => {
         try {
+            const result = await loginUserAction(data);
+
+            if (result.status === "SUCCESS") toast.success(result.message);
+            else toast.error(result.message);
         } catch (error) { }
     };
-    
+
     return <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
             <CardHeader className="text-center">
@@ -46,11 +47,11 @@ const LoginPage: React.FC = () => {
                     <UserCheck className="w-8 h-8 text-primary-foreground" />
                 </div>
                 <CardTitle className="text-2xl">Join Our Job Portal</CardTitle>
-                <CardDescription>Login to your account</CardDescription>
+                <CardDescription>Create your account to get started</CardDescription>
             </CardHeader>
 
             <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                     {/* Email Field */}
                     <div className="space-y-2">
                         <Label htmlFor="email">Email Address *</Label>
@@ -61,14 +62,18 @@ const LoginPage: React.FC = () => {
                                 type="email"
                                 placeholder="Enter your email"
                                 required
-                                value={formData.email}
-                                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                    handleInputChange("email", e.target.value)
-                                }
-                                className={`pl-10 `}
+                                {...register("email")}
+                                className={`pl-10 ${errors.email ? "border-destructive" : ""
+                                    }`}
                             />
                         </div>
+                        {errors.email && (
+                            <p className="text-sm text-destructive">
+                                {errors.email.message}
+                            </p>
+                        )}
                     </div>
+
                     {/* Password Field */}
                     <div className="space-y-2">
                         <Label htmlFor="password">Password *</Label>
@@ -79,11 +84,9 @@ const LoginPage: React.FC = () => {
                                 type={showPassword ? "text" : "password"}
                                 placeholder="Create a strong password"
                                 required
-                                value={formData.password}
-                                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                    handleInputChange("password", e.target.value)
-                                }
-                                className={`pl-10 pr-10 `}
+                                {...register("password")}
+                                className={`pl-10 ${errors.password ? "border-destructive" : ""
+                                    }`}
                             />
 
                             <Button
@@ -100,20 +103,26 @@ const LoginPage: React.FC = () => {
                                 )}
                             </Button>
                         </div>
+                        {errors.password && (
+                            <p className="text-sm text-destructive">
+                                {errors.password.message}
+                            </p>
+                        )}
                     </div>
+
                     {/* Submit Button */}
                     <Button type="submit" className="w-full">
-                        Login
+                        Create Account
                     </Button>
 
                     <div className="text-center">
                         <p className="text-sm text-muted-foreground">
-                            Dont have an account?{" "}
+                            Already have an account?
                             <Link
                                 href="/register"
                                 className="text-primary hover:text-primary/80 font-medium underline-offset-4 hover:underline"
                             >
-                                Create account
+                                Sign in here
                             </Link>
                         </p>
                     </div>
@@ -121,5 +130,6 @@ const LoginPage: React.FC = () => {
             </CardContent>
         </Card>
     </div>;
-}
-export default LoginPage;
+};
+
+export default LoginForm;

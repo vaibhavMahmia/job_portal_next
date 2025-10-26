@@ -1,4 +1,5 @@
-'use client';
+"use client";
+
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
@@ -19,60 +20,33 @@ import { Eye, EyeOff, Lock, Mail, User, UserCheck } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { registrationAction } from "./registrationAction.action";
 import { toast } from "sonner";
+import { registerUserAction } from "../../features/auth/server/auth.actions";
+import {
+    RegisterUserWithConfirmData,
+    registerUserWithConfirmSchema,
+} from "@/features/auth/auth.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 
-interface RegistrationFormData {
-    name: string;
-    userName: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
-    role: 'applicant' | 'employer';
-}
-
-const RegisterPage: React.FC = () => {
-    const [formData, setFormData] = useState<RegistrationFormData>({
-        name: '',
-        userName: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-        role: 'applicant'
+const Registration: React.FC = () => {
+    const {
+        register,
+        handleSubmit,
+        watch,
+        formState: { errors },
+    } = useForm({
+        resolver: zodResolver(registerUserWithConfirmSchema),
     });
 
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    const handleInputChange = (name: string, value: string) => {
-        setFormData((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
+    const onSubmit = async (data: RegisterUserWithConfirmData) => {
+        const result = await registerUserAction(data);
 
-    const handleSubmit = async (e: FormEvent) => {
-        e.preventDefault();
-
-        const registrationData = {
-            name: formData.name.trim(),
-            userName: formData.userName.trim(),
-            email: formData.email.toLowerCase().trim(),
-            password: formData.password,
-            role: formData.role,
-        };
-        if (formData.password !== formData.confirmPassword) return toast.warning('Passwords are not matching!');
-        const { status, message } = await registrationAction(registrationData);
-        if (status === 'success') toast.success(message);
-        else toast.error(message);
-        setFormData({
-            name: '',
-            userName: '',
-            email: '',
-            password: '',
-            confirmPassword: '',
-            role: 'applicant'
-        });
+        if (result.status === "SUCCESS") toast.success(result.message);
+        else toast.error(result.message);
     };
 
     return <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -86,7 +60,7 @@ const RegisterPage: React.FC = () => {
             </CardHeader>
 
             <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                     {/* Name Field */}
                     <div className="space-y-2">
                         <Label htmlFor="name">Full Name *</Label>
@@ -94,17 +68,19 @@ const RegisterPage: React.FC = () => {
                             <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                             <Input
                                 id="name"
-                                name="name"
                                 type="text"
                                 placeholder="Enter your full name"
                                 required
-                                value={formData.name}
-                                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                    handleInputChange("name", e.target.value)
-                                }
-                                className={`pl-10 `}
+                                {...register("name")}
+                                className={`pl-10 ${errors.name ? "border-destructive" : ""
+                                    }`}
                             />
                         </div>
+                        {errors.name && (
+                            <p className="text-sm text-destructive">
+                                {errors.name.message}
+                            </p>
+                        )}
                     </div>
 
                     {/* Username Field */}
@@ -114,17 +90,19 @@ const RegisterPage: React.FC = () => {
                             <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                             <Input
                                 id="userName"
-                                name="userName"
                                 type="text"
                                 placeholder="Choose a username"
                                 required
-                                value={formData.userName}
-                                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                    handleInputChange("userName", e.target.value)
-                                }
-                                className={`pl-10 `}
+                                {...register("userName")}
+                                className={`pl-10 ${errors.userName ? "border-destructive" : ""
+                                    }`}
                             />
                         </div>
+                        {errors.userName && (
+                            <p className="text-sm text-destructive">
+                                {errors.userName.message}
+                            </p>
+                        )}
                     </div>
 
                     {/* Email Field */}
@@ -134,29 +112,25 @@ const RegisterPage: React.FC = () => {
                             <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                             <Input
                                 id="email"
-                                name="email"
                                 type="email"
                                 placeholder="Enter your email"
+                                {...register("email")}
                                 required
-                                value={formData.email}
-                                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                    handleInputChange("email", e.target.value)
-                                }
-                                className={`pl-10 `}
+                                className={`pl-10 ${errors.email ? "border-destructive" : ""
+                                    }`}
                             />
                         </div>
+                        {errors.email && (
+                            <p className="text-sm text-destructive">
+                                {errors.email.message}
+                            </p>
+                        )}
                     </div>
 
                     {/* Role Selection */}
                     <div className="space-y-2 w-full">
                         <Label htmlFor="role">I am a *</Label>
-                        <Select
-                            name="role"
-                            value={formData.role}
-                            onValueChange={(value: "applicant" | "employer") =>
-                                handleInputChange("role", value)
-                            }
-                        >
+                        <Select {...register("role")}>
                             <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Select your role" />
                             </SelectTrigger>
@@ -174,15 +148,12 @@ const RegisterPage: React.FC = () => {
                             <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                             <Input
                                 id="password"
-                                name="password"
                                 type={showPassword ? "text" : "password"}
                                 placeholder="Create a strong password"
                                 required
-                                value={formData.password}
-                                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                    handleInputChange("password", e.target.value)
-                                }
-                                className={`pl-10 pr-10 `}
+                                {...register("password")}
+                                className={`pl-10 pr-10 ${errors.password ? "border-destructive" : ""
+                                    }`}
                             />
 
                             <Button
@@ -199,6 +170,11 @@ const RegisterPage: React.FC = () => {
                                 )}
                             </Button>
                         </div>
+                        {errors.password && (
+                            <p className="text-sm text-destructive">
+                                {errors.password.message}
+                            </p>
+                        )}
                     </div>
 
                     {/* Confirm Password Field */}
@@ -208,15 +184,12 @@ const RegisterPage: React.FC = () => {
                             <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                             <Input
                                 id="confirmPassword"
-                                name="confirmPassword"
                                 type={showConfirmPassword ? "text" : "password"}
                                 placeholder="Confirm your password"
                                 required
-                                value={formData.confirmPassword}
-                                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                    handleInputChange("confirmPassword", e.target.value)
-                                }
-                                className={`pl-10 pr-10 `}
+                                {...register("confirmPassword")}
+                                className={`pl-10 pr-10 ${errors.confirmPassword ? "border-destructive" : ""
+                                    }`}
                             />
                             <Button
                                 type="button"
@@ -232,6 +205,11 @@ const RegisterPage: React.FC = () => {
                                 )}
                             </Button>
                         </div>
+                        {errors.confirmPassword && (
+                            <p className="text-sm text-destructive">
+                                {errors.confirmPassword.message}
+                            </p>
+                        )}
                     </div>
 
                     {/* Submit Button */}
@@ -241,7 +219,7 @@ const RegisterPage: React.FC = () => {
 
                     <div className="text-center">
                         <p className="text-sm text-muted-foreground">
-                            Already have an account?{" "}
+                            Already have an account?
                             <Link
                                 href="/login"
                                 className="text-primary hover:text-primary/80 font-medium underline-offset-4 hover:underline"
@@ -254,5 +232,6 @@ const RegisterPage: React.FC = () => {
             </CardContent>
         </Card>
     </div>;
-}
-export default RegisterPage;
+};
+
+export default Registration;
