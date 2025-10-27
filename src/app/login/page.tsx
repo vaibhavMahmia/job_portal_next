@@ -112,17 +112,17 @@ const LoginForm: React.FC = () => {
 
                     {/* Submit Button */}
                     <Button type="submit" className="w-full">
-                        Create Account
+                        Login
                     </Button>
 
                     <div className="text-center">
                         <p className="text-sm text-muted-foreground">
-                            Already have an account?
+                            Dont have an account?
                             <Link
                                 href="/register"
                                 className="text-primary hover:text-primary/80 font-medium underline-offset-4 hover:underline"
                             >
-                                Sign in here
+                                Register here
                             </Link>
                         </p>
                     </div>
