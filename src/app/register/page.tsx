@@ -27,17 +27,10 @@ import {
     registerUserWithConfirmSchema,
 } from "@/features/auth/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 const Registration: React.FC = () => {
-    const {
-        register,
-        handleSubmit,
-        watch,
-        formState: { errors },
-    } = useForm({
-        resolver: zodResolver(registerUserWithConfirmSchema),
-    });
+    const { register, handleSubmit, control, formState: { errors } } = useForm({ resolver: zodResolver(registerUserWithConfirmSchema) });
 
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -130,7 +123,7 @@ const Registration: React.FC = () => {
                     {/* Role Selection */}
                     <div className="space-y-2 w-full">
                         <Label htmlFor="role">I am a *</Label>
-                        <Select {...register("role")}>
+                        <Controller name="role" control={control} render={({ field }) => <Select value={field.value} onValueChange={field.onChange}>
                             <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Select your role" />
                             </SelectTrigger>
@@ -138,7 +131,7 @@ const Registration: React.FC = () => {
                                 <SelectItem value="applicant">Job Applicant</SelectItem>
                                 <SelectItem value="employer">Employer</SelectItem>
                             </SelectContent>
-                        </Select>
+                        </Select>} />
                     </div>
 
                     {/* Password Field */}

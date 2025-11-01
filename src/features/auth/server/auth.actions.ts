@@ -31,10 +31,7 @@ export const registerUserAction = async (data: RegisterUserData) => {
     // console.log(formData.get("name"));
     const { name, userName, email, password, role } = validatedData;
 
-    const [user] = await db
-      .select()
-      .from(users)
-      .where(or(eq(users.email, email), eq(users.userName, userName)));
+    const [user] = await db.select().from(users).where(or(eq(users.email, email), eq(users.userName, userName)));
 
     if (user) {
       if (user.email === email)
@@ -48,9 +45,8 @@ export const registerUserAction = async (data: RegisterUserData) => {
 
     const hashPassword = await argon2.hash(password);
 
-    await db
-      .insert(users)
-      .values({ name, userName, email, password: hashPassword, role });
+    const [result] = await db.insert(users).values({ name, userName, email, password: hashPassword, role });
+    await createSessionAndSetCookies(result.insertId);
 
     return {
       status: "SUCCESS",
