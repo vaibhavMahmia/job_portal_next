@@ -37,7 +37,7 @@ export const createSessionAndSetCookies = async (userId: number) => {
     cookieStore.set('session', token, { secure: true, httpOnly: true, maxAge: SESSION_LIFETIME });
 }
 
-const invalidateSession =  async (id: string) => await db.delete(sessions).where(eq(sessions.id, id));
+export const invalidateSession =  async (id: string) => await db.delete(sessions).where(eq(sessions.id, id));
 
 export const validateSessionAndGetUser = async (session: string) => {
     const hashedToken = crypto.createHash('sha-256').update(session).digest('hex');
@@ -70,3 +70,4 @@ export const validateSessionAndGetUser = async (session: string) => {
 
     return user;
 }
+

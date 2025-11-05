@@ -1,5 +1,6 @@
 "use server";
 
+import crypto from 'crypto';
 import { db } from "@/config/db";
 import { users } from "@/drizzle/schema";
 import argon2 from "argon2";
@@ -10,7 +11,9 @@ import {
   RegisterUserData,
   registerUserSchema,
 } from "../auth.schema";
-import { createSessionAndSetCookies } from "./use_cases/sessions";
+import { createSessionAndSetCookies, invalidateSession } from "./use_cases/sessions";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 // 👉 Server Actions in Next.js are special functions that run only on the server, not in the user’s browser.
 
@@ -91,3 +94,15 @@ export const loginUserAction = async (data: LoginUserData) => {
     };
   }
 };
+
+export const logoutUserAction = async () => {
+    const cookieStore = await cookies();
+    const session = cookieStore.get('session')?.value;
+    if (!session) return redirect('/login');
+
+    const hashedToken = crypto.createHash('sha-256').update(session).digest('hex');
+    await invalidateSession(hashedToken);
+    cookieStore.delete('session');
+
+    return redirect('/login');
+}

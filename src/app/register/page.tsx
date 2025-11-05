@@ -28,6 +28,7 @@ import {
 } from "@/features/auth/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 
 const Registration: React.FC = () => {
     const { register, handleSubmit, control, formState: { errors } } = useForm({ resolver: zodResolver(registerUserWithConfirmSchema) });
@@ -35,10 +36,16 @@ const Registration: React.FC = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+    const router = useRouter();
+
     const onSubmit = async (data: RegisterUserWithConfirmData) => {
         const result = await registerUserAction(data);
 
-        if (result.status === "SUCCESS") toast.success(result.message);
+        if (result.status === "SUCCESS") {
+            toast.success(result.message);
+            if (data.role === 'employer') router.push('/dashboard/employer');
+            else router.push('/dashboard/applicant');
+        }
         else toast.error(result.message);
     };
 

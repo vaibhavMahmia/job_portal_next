@@ -15,6 +15,13 @@
       "when": 1760627353795,
       "tag": "0001_dizzy_bastion",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1762354895940,
+      "tag": "0002_unknown_romulus",
+      "breakpoints": true
     }
   ]
 }
