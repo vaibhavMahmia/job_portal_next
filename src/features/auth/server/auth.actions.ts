@@ -2,7 +2,7 @@
 
 import crypto from 'crypto';
 import { db } from "@/config/db";
-import { users } from "@/drizzle/schema";
+import { applicants, employers, users } from "@/drizzle/schema";
 import argon2 from "argon2";
 import { eq, or } from "drizzle-orm";
 import {
@@ -48,8 +48,13 @@ export const registerUserAction = async (data: RegisterUserData) => {
 
     const hashPassword = await argon2.hash(password);
 
-    const [result] = await db.insert(users).values({ name, userName, email, password: hashPassword, role });
-    await createSessionAndSetCookies(result.insertId);
+    await db.transaction(async (tx) => {
+      const [result] = await db.insert(users).values({ name, userName, email, password: hashPassword, role });
+      if (role === 'applicant') await db.insert(applicants).values({ id: result.insertId });
+      else await db.insert(employers).values({ id: result.insertId });
+
+      await createSessionAndSetCookies(result.insertId, tx);
+    });
 
     return {
       status: "SUCCESS",
@@ -74,7 +79,7 @@ export const loginUserAction = async (data: LoginUserData) => {
 
     const [user] = await db.select().from(users).where(eq(users.email, email));
 
-    if (!user) 
+    if (!user)
       return { status: "ERROR", message: "Invalid Email or Password" };
 
     const isValidPassword = await argon2.verify(user.password, password);
@@ -96,13 +101,13 @@ export const loginUserAction = async (data: LoginUserData) => {
 };
 
 export const logoutUserAction = async () => {
-    const cookieStore = await cookies();
-    const session = cookieStore.get('session')?.value;
-    if (!session) return redirect('/login');
+  const cookieStore = await cookies();
+  const session = cookieStore.get('session')?.value;
+  if (!session) return redirect('/login');
 
-    const hashedToken = crypto.createHash('sha-256').update(session).digest('hex');
-    await invalidateSession(hashedToken);
-    cookieStore.delete('session');
+  const hashedToken = crypto.createHash('sha-256').update(session).digest('hex');
+  await invalidateSession(hashedToken);
+  cookieStore.delete('session');
 
-    return redirect('/login');
+  return redirect('/login');
 }
