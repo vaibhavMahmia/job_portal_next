@@ -5,9 +5,9 @@ const EmployerDashboardLayout = async ({ children }: Readonly<{ children: React.
     const user = await getCurrentUser();
     if (!user) return redirect('/login');
     if (user.role !== 'employer') return redirect('/dashboard/applicant');
-    return <>
-        {children}
-    </>;
+    return <div className="flex min-h-screen bg-background">
+        <main className="container mx-auto mt-5 ml-70 mr-5">{children}</main>
+    </div>;
 }
 
 export default EmployerDashboardLayout;
