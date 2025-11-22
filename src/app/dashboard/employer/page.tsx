@@ -1,4 +1,5 @@
 import { getCurrentUser } from "@/features/auth/server/auth.queries";
+import { EmployerProfileStatus } from "@/features/employers/components/EmployerProfileStatus";
 import { EmployerStats } from "@/features/employers/components/EmployerStats";
 import { redirect } from "next/navigation";
 import React from "react";
@@ -19,6 +20,8 @@ const EmployerDashboard: React.FC = async () => {
 
         {/* Stats Cards */}
         <EmployerStats/>
+
+        <EmployerProfileStatus/>
     </div>
 }
 
