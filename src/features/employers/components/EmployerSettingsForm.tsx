@@ -22,28 +22,19 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { updateEmployerProfileAction } from '../server/employers.action';
+import { toast } from 'sonner';
+import { EmployerProfileData, employerProfileSchema, organizationTypes, teamSizes } from '../employers.schema';
+import { zodResolver } from '@hookform/resolvers/zod';
 
-const organizationTypeOptions = ["development", "business", "design"] as const;
-type OrganizationType = (typeof organizationTypeOptions)[number];
-
-const teamSizeOptions = ["1-5", "6-20", "21-50"] as const;
-type TeamSize = (typeof teamSizeOptions)[number];
-
-interface IFormInput {
-    name: string;
-    description: string;
-    yearOfEstablishment: string;
-    location: string;
-    websiteUrl: string;
-    organizationType: OrganizationType;
-    teamSize: TeamSize;
-}
 
 export const EmployerSettingsForm: React.FC = () => {
-    const { register, handleSubmit, control } = useForm<IFormInput>();
+    const { register, handleSubmit, control, formState: { errors } } = useForm<EmployerProfileData>({ resolver: zodResolver(employerProfileSchema) });
 
-    const handleFormSubmit = (data: IFormInput) => {
-        console.log("data: ", data);
+    const handleFormSubmit = async (data: EmployerProfileData) => {
+        const response = await updateEmployerProfileAction(data);
+        if (response.status === 'success') toast.success(response.message);
+        else toast.error(response.message);
     };
     return <Card className="w-3/4 ">
         <CardContent>
@@ -57,10 +48,11 @@ export const EmployerSettingsForm: React.FC = () => {
                             id="companyName"
                             type="text"
                             placeholder="Enter company name"
-                            className="pl-10"
+                            className={`pl-10 ${errors.name ? "border-destructive" : ""} `}
                             {...register("name")}
                         />
                     </div>
+                    {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
                 </div>
                 {/* Description */}
                 <div className="space-y-2">
@@ -74,6 +66,7 @@ export const EmployerSettingsForm: React.FC = () => {
                             {...register("description")}
                         />
                     </div>
+                    {errors.description && <p className="text-sm text-destructive">{errors.description.message}</p>}
                 </div>
                 {/* When you run const { control } = useForm(), you create a specific instance of a form. The <Controller /> component is isolated; it doesn't know which form it belongs to. Passing control={control} connects this specific input to that specific useForm hook. */}
                 {/* Organization Type and Team Size - Two columns */}
@@ -93,7 +86,7 @@ export const EmployerSettingsForm: React.FC = () => {
                                             <SelectValue placeholder="Select organization type" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {organizationTypeOptions.map((type) => (
+                                            {organizationTypes.map((type) => (
                                                 <SelectItem key={type} value={type}>
                                                     {/* {capitalizeWords(type)} */}
                                                     {type}
@@ -104,9 +97,10 @@ export const EmployerSettingsForm: React.FC = () => {
                                 </div>
                             )}
                         />
+                        {errors.organizationType && <p className="text-sm text-destructive">{errors.organizationType.message}</p>}
                     </div>
 
-                    {/* Organization Type */}
+                    {/* Team Size */}
                     <div className="space-y-2">
                         <Label htmlFor="teamSize">Team Size *</Label>
                         <Controller
@@ -120,7 +114,7 @@ export const EmployerSettingsForm: React.FC = () => {
                                             <SelectValue placeholder="Select Team Size" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            {teamSizeOptions.map((type) => (
+                                            {teamSizes.map((type) => (
                                                 <SelectItem key={type} value={type}>
                                                     {/* {capitalizeWords(type)} */}
                                                     {type}
@@ -131,6 +125,7 @@ export const EmployerSettingsForm: React.FC = () => {
                                 </div>
                             )}
                         />
+                        {errors.teamSize && <p className="text-sm text-destructive">{errors.teamSize.message}</p>}
                     </div>
                 </div>
 
@@ -151,6 +146,7 @@ export const EmployerSettingsForm: React.FC = () => {
                                 {...register("yearOfEstablishment")}
                             />
                         </div>
+                        {errors.yearOfEstablishment && <p className="text-sm text-destructive">{errors.yearOfEstablishment.message}</p>}
                     </div>
 
                     {/* Year of Establishment and Location - Two columns */}
@@ -167,7 +163,9 @@ export const EmployerSettingsForm: React.FC = () => {
                                 {...register("location")}
                             />
                         </div>
+                        {errors.location && <p className="text-sm text-destructive">{errors.location.message}</p>}
                     </div>
+                    
                 </div>
                 {/* Website URL */}
                 <div className="space-y-2">
@@ -182,6 +180,7 @@ export const EmployerSettingsForm: React.FC = () => {
                             {...register("websiteUrl")}
                         />
                     </div>
+                    {errors.websiteUrl && <p className="text-sm text-destructive">{errors.websiteUrl.message}</p>}
                 </div>
                 <Button type="submit">Save Changes</Button>
             </form>
