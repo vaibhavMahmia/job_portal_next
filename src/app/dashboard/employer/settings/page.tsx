@@ -1,8 +1,25 @@
 import { EmployerSettingsForm } from '@/features/employers/components/EmployerSettingsForm';
+import { getCurrentEmployerDetails } from '@/features/employers/server/employers.queries';
+import { redirect } from 'next/navigation';
 import React from 'react'
 
-const SettingsPage: React.FC = () => {
-  return <EmployerSettingsForm />
+const SettingsPage: React.FC = async () => {
+  const employer = await getCurrentEmployerDetails();
+  if (!employer) return redirect("/login");
+
+  console.log("currentEmployer: ", employer);
+
+  return <EmployerSettingsForm
+    initialData={{
+      name: employer.employerDetails.name,
+      description: employer.employerDetails.description,
+      organizationType: employer.employerDetails.organizationType,
+      teamSize: employer.employerDetails.teamSize,
+      location: employer.employerDetails.location,
+      websiteUrl: employer.employerDetails.websiteUrl,
+      yearOfEstablishment: employer.employerDetails.yearOfEstablishment?.toString(),
+    }}
+  />
 }
 
 export default SettingsPage;

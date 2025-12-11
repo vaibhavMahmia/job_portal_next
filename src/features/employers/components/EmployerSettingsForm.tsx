@@ -12,6 +12,7 @@ import {
     Calendar,
     FileText,
     Globe,
+    Loader,
     MapPin,
 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
@@ -26,10 +27,22 @@ import { updateEmployerProfileAction } from '../server/employers.action';
 import { toast } from 'sonner';
 import { EmployerProfileData, employerProfileSchema, organizationTypes, teamSizes } from '../employers.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Tiptap } from '@/components/Tiptap';
 
 
-export const EmployerSettingsForm: React.FC = () => {
-    const { register, handleSubmit, control, formState: { errors } } = useForm<EmployerProfileData>({ resolver: zodResolver(employerProfileSchema) });
+export const EmployerSettingsForm: React.FC = ({ initialData }: { initialData?: Partial<EmployerProfileData> }) => {
+    const { register, handleSubmit, control, formState: { errors, isDirty, isSubmitting } } = useForm<EmployerProfileData>({
+        defaultValues: {
+            name: initialData?.name || "",
+            description: initialData?.description || "",
+            organizationType: initialData?.organizationType || undefined,
+            teamSize: initialData?.teamSize || undefined,
+            yearOfEstablishment: initialData?.yearOfEstablishment,
+            websiteUrl: initialData?.websiteUrl || "",
+            location: initialData?.location || "",
+        },
+        resolver: zodResolver(employerProfileSchema),
+    });
 
     const handleFormSubmit = async (data: EmployerProfileData) => {
         const response = await updateEmployerProfileAction(data);
@@ -68,6 +81,7 @@ export const EmployerSettingsForm: React.FC = () => {
                     </div>
                     {errors.description && <p className="text-sm text-destructive">{errors.description.message}</p>}
                 </div>
+                <Tiptap/>
                 {/* When you run const { control } = useForm(), you create a specific instance of a form. The <Controller /> component is isolated; it doesn't know which form it belongs to. Passing control={control} connects this specific input to that specific useForm hook. */}
                 {/* Organization Type and Team Size - Two columns */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -165,7 +179,7 @@ export const EmployerSettingsForm: React.FC = () => {
                         </div>
                         {errors.location && <p className="text-sm text-destructive">{errors.location.message}</p>}
                     </div>
-                    
+
                 </div>
                 {/* Website URL */}
                 <div className="space-y-2">
@@ -182,7 +196,13 @@ export const EmployerSettingsForm: React.FC = () => {
                     </div>
                     {errors.websiteUrl && <p className="text-sm text-destructive">{errors.websiteUrl.message}</p>}
                 </div>
-                <Button type="submit">Save Changes</Button>
+                <div className="flex item-center gap-4 pt-4">
+                    <Button type="submit" disabled={!isDirty}>
+                        {isSubmitting && <Loader className='w-4 h-4 animate-spin' />}
+                        {isSubmitting ? 'Saving Changes...' : 'Save Changes'}
+                    </Button>
+                    {!isDirty && <p className='text-sm text-muted-foreground'>No changes to save</p>}
+                </div>
             </form>
         </CardContent>
     </Card>;
