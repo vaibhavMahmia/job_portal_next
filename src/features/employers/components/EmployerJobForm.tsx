@@ -12,27 +12,18 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { JOB_LEVEL, JOB_TYPE, MIN_EDUCATION, SALARY_CURRENCY, SALARY_PERIOD, WORK_TYPE } from '@/config/constant';
 import { Tiptap } from '@/components/Tiptap';
-
-
-interface JobFormValues {
-    title: string;
-    description: string;
-    tags?: string; // comma or space seperated
-    minSalary?: number;
-    maxSalary?: number;
-
-}
+import { createJobAction } from '../server/jobs/jobs.action';
+import { toast } from 'sonner';
 
 export const EmployerJobForm: React.FC = () => {
     const { register, control, handleSubmit, formState: { errors, isDirty, isSubmitting } } = useForm({
         resolver: zodResolver(jobSchema)
     });
 
-    const handleFormSubmit = async (data: Partial<JobFormData>) => {
-        //const response = await createJobAction(data);
-        setTimeout(() => console.log('submitted'), 5000);
-        console.log(data);
-        alert(data.title);
+    const handleFormSubmit = async (data: JobFormData) => {
+        const response = await createJobAction(data);
+        if (response.status === 'success') toast.success(response.message);
+        else toast.error(response.message);
     }
     return <Card className='w-3/4'>
         <CardContent>
