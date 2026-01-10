@@ -9,7 +9,7 @@ export const getCurrentEmployerDetails = async () => {
   if (currentUser.role !== "employer") return null;
 
   const [employer] = await db.select().from(employers).where(eq(employers.id, currentUser.id));
-  const isProfileCompleted = employer?.name && employer?.description && employer?.avatarUrl && employer?.organizationType && employer?.yearOfEstablishment;
+  const isProfileCompleted = employer?.name && employer?.description && currentUser?.avatarUrl && employer?.organizationType && employer?.yearOfEstablishment;
 
   return { ...currentUser, employerDetails: employer, isProfileCompleted };
 };

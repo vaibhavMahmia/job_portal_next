@@ -57,7 +57,8 @@ export const validateSessionAndGetUser = async (session: string) => {
         role: users.role,
         phoneNumber: users.phoneNumber,
         email: users.email,
-        crestedAt: users.createdAt,
+        avatarUrl: users.avatarUrl,
+        createdAt: users.createdAt,
         updatedAt: users.updatedAt
     }).from(sessions).where(eq(sessions.id, hashedToken)).innerJoin(users, eq(users.id, sessions.userId));
 
