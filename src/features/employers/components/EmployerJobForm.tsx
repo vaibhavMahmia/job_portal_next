@@ -431,7 +431,7 @@ export const EmployerJobForm: React.FC = () => {
                     <Button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full md:w-auto"
+                        className="w-full md:w-auto bg-blue-500"
                     >
                         {isSubmitting && <Loader className="w-4 h-4 animate-spin" />}
                         {isSubmitting ? "Saving..." : "Post Job"}

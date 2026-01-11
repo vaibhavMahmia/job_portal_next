@@ -22,7 +22,7 @@ const navigationItems = [
   { name: "Overview", icon: LayoutDashboard, href: base + "/" },
   { name: "Employers Profile", icon: User },
   { name: "Post a Job", icon: Plus, href: base + "/jobs" },
-  { name: "My Jobs", icon: Briefcase },
+  { name: "My Jobs", icon: Briefcase, href: base + "/joblist" },
   { name: "Saved Candidate", icon: Bookmark },
   { name: "Plans & Billing", icon: CreditCard },
   { name: "All Companies", icon: Building },
@@ -54,7 +54,7 @@ export const EmployerSidebar: React.FC = () => {
             href: curNav.href || "#",
             pathname,
             base: "/dashboard/employer",
-          }) && "text-primary bg-blue-300"
+          }) && "text-white bg-teal-500"
         )}>
           <Icon />
           {curNav.name}

@@ -265,7 +265,7 @@ export const EmployerSettingsForm: React.FC = ({ initialData }: { initialData?: 
                     {errors.websiteUrl && <p className="text-sm text-destructive">{errors.websiteUrl.message}</p>}
                 </div>
                 <div className="flex item-center gap-4 pt-4">
-                    <Button type="submit" disabled={!isDirty}>
+                    <Button type="submit" disabled={!isDirty} className='bg-blue-500'>
                         {isSubmitting && <Loader className='w-4 h-4 animate-spin' />}
                         {isSubmitting ? 'Saving Changes...' : 'Save Changes'}
                     </Button>

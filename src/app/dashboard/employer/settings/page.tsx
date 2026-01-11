@@ -8,8 +8,6 @@ const SettingsPage: React.FC = async () => {
   const employer = await getCurrentEmployerDetails();
   if (!employer) return redirect("/login");
 
-  console.log("currentEmployer: ", employer);
-
   return <EmployerSettingsForm
     initialData={{
       name: employer.employerDetails.name,
