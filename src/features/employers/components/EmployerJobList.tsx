@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { Job } from '../jobs/types/job.types';
-import { getEmployerJobsAction } from '../server/jobs/jobs.action';
+import { deleteJobAction, getEmployerJobsAction } from '../server/jobs/jobs.action';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 import { EmployerJobCard } from './EmployerJobCard';
@@ -27,6 +27,18 @@ export const EmployerJobList: React.FC = () => {
 
         fetchJobs();
     }, []);
+
+    const handleDelete = async (jobId: number) => {
+        try {
+            const res = await deleteJobAction(jobId);
+            if (res.status === 'success') {
+                setJobs((prevJobs) => prevJobs.filter((job) =>job.id !== jobId));
+                toast.success('Job deleted successfully.');
+            }
+        } catch (error) {
+            toast.error('An unexpected error occured.');
+        }
+    }
     
     if (isLoading) return <div className="flex justify-center items-center min-h-[400px]">
         <Loader2 className='w-8 h-8 animate-spin' />
@@ -37,6 +49,6 @@ export const EmployerJobList: React.FC = () => {
     </div>;
 
     return <section className="grid lg:grid-cols-3 md:grid-cols-2 gap-4">
-        {jobs.map((job) => <EmployerJobCard key={job.id} job={job} />)}
+        {jobs.map((job) => <EmployerJobCard key={job.id} job={job} onDelete={handleDelete} />)}
     </section>;
 }

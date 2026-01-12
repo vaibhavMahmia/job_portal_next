@@ -5,7 +5,7 @@ import { JobFormData, jobSchema } from "../../jobs/jobs.schema";
 import { db } from "@/config/db";
 import { jobs } from "@/drizzle/schema";
 import { Job } from "../../jobs/types/job.types";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 export const createJobAction = async (data: JobFormData) => {
     try {
@@ -33,6 +33,18 @@ export const getEmployerJobsAction = async (): Promise<{
 
         const result = await db.select().from(jobs).where(eq(jobs.employerId, currentUser.id)).orderBy(jobs.createdAt);
         return { status: 'success', data: result as Array<Job> };
+    } catch (error) {
+        return { status: 'error', message: 'Something went wrong, Please try again later.' };
+    }
+}
+
+export const deleteJobAction = async (jobId: number): Promise<{ status: 'success' | 'error'; message: string; }> => {
+    try {
+        const currentUser = await getCurrentUser();
+        if (!currentUser || currentUser.role !== 'employer') return { status: 'error', message: 'Unauthorized.' };
+
+        await db.delete(jobs).where(and(eq(jobs.id, jobId), eq(jobs.employerId, currentUser.id)));
+        return { status: 'success', message: 'Job deleted successfully.' };
     } catch (error) {
         return { status: 'error', message: 'Something went wrong, Please try again later.' };
     }
