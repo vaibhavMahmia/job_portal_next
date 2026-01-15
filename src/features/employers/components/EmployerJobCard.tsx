@@ -16,13 +16,13 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-export const EmployerJobCard: React.FC<JobCardProps> = ({ job, onDelete }) => <Card className="hover:shadow-md transition cursor-pointer">
+export const EmployerJobCard: React.FC<JobCardProps> = ({ job, onDelete, onEdit }) => <Card className="hover:shadow-md transition cursor-pointer">
     <CardContent className="space-y-3 p-4">
         <div className="flex justify-between items-start">
             <h3 className="font-semibold text-lg">{job.title}</h3>
 
             <div className="flex gap-2">
-                <Button size='icon' variant='ghost'>
+                <Button size='icon' variant='ghost' onClick={() => onEdit?.(job.id)}>
                     <Pencil className="w-4 h-4" />
                 </Button>
                 {/*  Delete with confirmation*/}
@@ -55,9 +55,9 @@ export const EmployerJobCard: React.FC<JobCardProps> = ({ job, onDelete }) => <C
         </div>
 
         <div className="flex flex-wrap gap-2 text-sm">
-            <Badge variant='secondary' className="bg-teal-500 text-white dark:bg-teal-600 font-bold">{job.jobType}</Badge>
-            <Badge variant='secondary' className="bg-yellow-500 text-white dark:bg-yellow-600 font-bold">{job.workType}</Badge>
-            <Badge variant='secondary' className="bg-red-500 text-white dark:bg-red-600 font-bold">{job.jobLevel}</Badge>
+            <Badge variant='secondary' className="bg-teal-600 text-white dark:bg-teal-700 font-bold">{job.jobType}</Badge>
+            <Badge variant='secondary' className="bg-yellow-600 text-white dark:bg-yellow-700 font-bold">{job.workType}</Badge>
+            <Badge variant='secondary' className="bg-red-600 text-white dark:bg-red-700 font-bold">{job.jobLevel}</Badge>
         </div>
 
         {job.location && (

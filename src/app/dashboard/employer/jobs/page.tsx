@@ -1,9 +1,9 @@
-import { EmployerJobForm } from '@/features/employers/components/EmployerJobForm';
+import { EmployerJobList } from '@/features/employers/components/EmployerJobList';
 import React from 'react';
 
-const JobsPage: React.FC = () => <>
-    <h1 className='mb-5'> Post a New Job </h1>
-    <EmployerJobForm />
-</>;
+const JobListPage: React.FC = () => <div className="container mx-auto py-6">
+    <h1 className="text-2xl font-bold mb-6">My Job Posts</h1>
+    <EmployerJobList />
+</div>;
 
-export default JobsPage;
+export default JobListPage;
