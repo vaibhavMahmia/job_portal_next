@@ -54,7 +54,7 @@ export const EmployerSidebar: React.FC = () => {
             href: curNav.href || "#",
             pathname,
             base: "/dashboard/employer",
-          }) && "text-white bg-teal-600"
+          }) && "text-white bg-teal-800"
         )}>
           <Icon />
           {curNav.name}

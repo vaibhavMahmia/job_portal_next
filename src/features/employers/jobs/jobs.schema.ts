@@ -27,20 +27,21 @@ export const jobSchema = z
       .optional()
       .or(z.literal("")), //This field is allowed to be an empty string.
     minSalary: z
-      .string()
-      .trim()
-      .regex(/^\d+$/, "Minimum salary must be a valid number")
+      .union([z.number(), z.string()])
       .optional()
-      .or(z.literal(""))
-      .transform((v) => (!v ? null : Number(v)))
+      .transform((v) => {
+        if (v === "" || v === undefined || v === null) return null;
+        return typeof v === "number" ? v : Number(v);
+      })
       .nullable(),
+
     maxSalary: z
-      .string()
-      .trim()
-      .regex(/^\d+$/, "Maximum salary must be a valid number")
+      .union([z.number(), z.string()])
       .optional()
-      .or(z.literal(""))
-      .transform((v) => (!v ? null : Number(v)))
+      .transform((v) => {
+        if (v === "" || v === undefined || v === null) return null;
+        return typeof v === "number" ? v : Number(v);
+      })
       .nullable(),
     salaryCurrency: z
       .enum(SALARY_CURRENCY, {
@@ -82,30 +83,25 @@ export const jobSchema = z
 
     // 2026-01-05  ✅  01-05-2026  ❌  2026/01/05  ❌
     expiresAt: z
-      .string()
-      .trim()
+      .union([z.string(), z.date()])
       .optional()
-      .or(z.literal(""))
-      .transform((v) => (!v || v === '' ? null : v))
-      .pipe(
-        z
-          .string()
-          .regex(/^\d{4}-\d{2}-\d{2}$/, "Please enter a valid date (YYYY-MM-DD)")
-          .refine(
-            (date) => {
-              const expiryDate = new Date(date);
-              const today = new Date();
-              today.setHours(0, 0, 0, 0);
-              return expiryDate >= today;
-            },
-            {
-              message: "Expiry date must be today or in the future",
-            }
-          )
-          .transform((date) => new Date(date))
-          .nullable()
+      .transform((v) => {
+        if (!v || v === "") return null;
+        if (v instanceof Date) return v;
+        return new Date(v);
+      })
+      .refine(
+        (date) => {
+          if (!date) return true;
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          return date >= today;
+        },
+        {
+          message: "Expiry date must be today or in the future",
+        }
       )
-      .nullable()
+      .nullable(),
   })
   .refine(
     (data) => {
@@ -137,7 +133,6 @@ export const jobSchema = z
       path: ["salaryCurrency"],
     }
   );
-
 export type JobFormData = z.infer<typeof jobSchema>;
 
 //   .refine(

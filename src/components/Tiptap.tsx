@@ -244,7 +244,7 @@ const ToolBar = ({ editor }: { editor: Editor }) => {
             size="sm"
             pressed={editorState.isHighlight}
             onPressedChange={() =>
-                editor.chain().focus().toggleHighlight({ color: "#60b9fc" }).run()
+                editor.chain().focus().toggleHighlight({ color: "#c77802" }).run()
             }
             aria-label="Toggle highlight"
         >

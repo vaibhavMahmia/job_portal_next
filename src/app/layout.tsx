@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Urbanist, Montserrat } from "next/font/google";
 // @ts-ignore: side-effect CSS import has no module/type declarations; add a global declaration file (e.g. src/types/global.d.ts) to properly type this
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "next-themes";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const urbanist = Urbanist({
+  variable: "--font-urbanist",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const montserrat = Montserrat({
+  variable: "--font-montserrat",
   subsets: ["latin"],
 });
 
@@ -21,10 +22,17 @@ export const metadata: Metadata = {
 
 const RootLayout = ({ children }: Readonly<{ children: React.ReactNode; }>) => <html lang="en">
   <body
-    className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+    className={`${urbanist.variable} ${montserrat.variable} antialiased`}
   >
-    {children}
-    <Toaster position="top-right" richColors />
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+    >
+      {children}
+      <Toaster position="top-right" richColors />
+    </ThemeProvider>
   </body>
 </html>;
 

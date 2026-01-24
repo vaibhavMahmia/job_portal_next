@@ -14,15 +14,20 @@ import { JOB_LEVEL, JOB_TYPE, MIN_EDUCATION, SALARY_CURRENCY, SALARY_PERIOD, WOR
 import { Tiptap } from '@/components/Tiptap';
 import { createJobAction } from '../server/jobs/jobs.action';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 export const EmployerJobForm: React.FC = () => {
     const { register, control, handleSubmit, formState: { errors, isDirty, isSubmitting } } = useForm({
         resolver: zodResolver(jobSchema)
     });
 
+    const router = useRouter();
     const handleFormSubmit = async (data: JobFormData) => {
         const response = await createJobAction(data);
-        if (response.status === 'success') toast.success(response.message);
+        if (response.status === 'success') {
+            toast.success(response.message);
+            router.push('/dashboard/employer/jobs');
+        }
         else toast.error(response.message);
     }
     return <Card className='w-3/4'>
