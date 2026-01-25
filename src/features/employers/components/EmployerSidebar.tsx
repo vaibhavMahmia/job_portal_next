@@ -40,7 +40,7 @@ export const EmployerSidebar: React.FC = () => {
 
   return <div className="w-64 bg-card border-r border-border fixed bottom-0 top-0">
     <div className="p-6">
-      <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+      <h2 className="text-sm font-medium text-white uppercase tracking-wide">
         Employers Dashboard
       </h2>
     </div>

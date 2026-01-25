@@ -12,23 +12,56 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { JOB_LEVEL, JOB_TYPE, MIN_EDUCATION, SALARY_CURRENCY, SALARY_PERIOD, WORK_TYPE } from '@/config/constant';
 import { Tiptap } from '@/components/Tiptap';
-import { createJobAction } from '../server/jobs/jobs.action';
+import { createJobAction, updateJobAction } from '../server/jobs/jobs.action';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
-export const EmployerJobForm: React.FC = () => {
+interface EmployerJobFormProps {
+    initialData?: any;
+    isEditMode?: boolean;
+}
+
+export const EmployerJobForm: React.FC<EmployerJobFormProps> = ({ initialData, isEditMode }) => {
     const { register, control, handleSubmit, formState: { errors, isDirty, isSubmitting } } = useForm({
-        resolver: zodResolver(jobSchema)
+        resolver: zodResolver(jobSchema),
+        defaultValues: initialData ? {
+            ...initialData,
+            expiresAt: initialData.expiresAt ? new Date(initialData.expiresAt).toISOString().split("T")[0] : ''
+        } : {
+            title: "",
+            description: "",
+
+            jobType: undefined,
+            workType: undefined,
+            jobLevel: undefined,
+
+            location: "",
+            tags: "",
+
+            minSalary: "",
+            maxSalary: "",
+            salaryCurrency: undefined,
+            salaryPeriod: undefined,
+
+            minEducation: undefined,
+            experience: "",
+            expiresAt: ""
+        }
     });
 
     const router = useRouter();
     const handleFormSubmit = async (data: JobFormData) => {
-        const response = await createJobAction(data);
-        if (response.status === 'success') {
-            toast.success(response.message);
-            router.push('/dashboard/employer/jobs');
+        try {
+            let response;
+            if (isEditMode && initialData) response = await updateJobAction(initialData.id, data);
+            else response = await createJobAction(data);
+            if (response.status === 'success') {
+                toast.success(response.message);
+                router.push('/dashboard/employer/jobs');
+            } else toast.error(response.message);
+        } catch (error) {
+            toast.error('Something went wrong.')
         }
-        else toast.error(response.message);
     }
     return <Card className='w-3/4'>
         <CardContent>
@@ -47,7 +80,7 @@ export const EmployerJobForm: React.FC = () => {
                         />
                     </div>
                     {errors.title && (
-                        <p className="text-sm text-destructive">{errors.title.message}</p>
+                        <p className="text-sm text-destructive">{errors.title.message as string}</p>
                     )}
                 </div>
 
@@ -84,7 +117,7 @@ export const EmployerJobForm: React.FC = () => {
                         />
                         {errors.jobType && (
                             <p className="text-sm text-destructive">
-                                {errors.jobType.message}
+                                {errors.jobType.message as string}
                             </p>
                         )}
                     </div>
@@ -120,7 +153,7 @@ export const EmployerJobForm: React.FC = () => {
                         />
                         {errors.workType && (
                             <p className="text-sm text-destructive">
-                                {errors.workType.message}
+                                {errors.workType.message as string}
                             </p>
                         )}
                     </div>
@@ -156,7 +189,7 @@ export const EmployerJobForm: React.FC = () => {
                         />
                         {errors.jobLevel && (
                             <p className="text-sm text-destructive">
-                                {errors.jobLevel.message}
+                                {errors.jobLevel.message as string}
                             </p>
                         )}
                     </div>
@@ -182,7 +215,7 @@ export const EmployerJobForm: React.FC = () => {
                         </div>
                         {errors.location && (
                             <p className="text-sm text-destructive">
-                                {errors.location.message}
+                                {errors.location.message as string}
                             </p>
                         )}
                     </div>
@@ -202,7 +235,7 @@ export const EmployerJobForm: React.FC = () => {
                         </div>
                         {errors.tags && (
                             <p className="text-sm text-destructive">
-                                {errors.tags.message}
+                                {errors.tags.message as string}
                             </p>
                         )}
                     </div>
@@ -229,7 +262,7 @@ export const EmployerJobForm: React.FC = () => {
                         </div>
                         {errors.minSalary && (
                             <p className="text-sm text-destructive">
-                                {errors.minSalary.message}
+                                {errors.minSalary.message as string}
                             </p>
                         )}
                     </div>
@@ -253,7 +286,7 @@ export const EmployerJobForm: React.FC = () => {
                         </div>
                         {errors.maxSalary && (
                             <p className="text-sm text-destructive">
-                                {errors.maxSalary.message}
+                                {errors.maxSalary.message as string}
                             </p>
                         )}
                     </div>
@@ -286,7 +319,7 @@ export const EmployerJobForm: React.FC = () => {
                         />
                         {errors.salaryCurrency && (
                             <p className="text-sm text-destructive">
-                                {errors.salaryCurrency.message}
+                                {errors.salaryCurrency.message as string}
                             </p>
                         )}
                     </div>
@@ -319,7 +352,7 @@ export const EmployerJobForm: React.FC = () => {
                         />
                         {errors.salaryPeriod && (
                             <p className="text-sm text-destructive">
-                                {errors.salaryPeriod.message}
+                                {errors.salaryPeriod.message as string}
                             </p>
                         )}
                     </div>
@@ -358,7 +391,7 @@ export const EmployerJobForm: React.FC = () => {
                         />
                         {errors.minEducation && (
                             <p className="text-sm text-destructive">
-                                {errors.minEducation.message}
+                                {errors.minEducation.message as string}
                             </p>
                         )}
                     </div>
@@ -380,7 +413,7 @@ export const EmployerJobForm: React.FC = () => {
                         </div>
                         {errors.expiresAt && (
                             <p className="text-sm text-destructive">
-                                {errors.expiresAt.message}
+                                {errors.expiresAt.message as string}
                             </p>
                         )}
                     </div>
@@ -407,7 +440,7 @@ export const EmployerJobForm: React.FC = () => {
                     </div>
                     {errors.experience && (
                         <p className="text-sm text-destructive">
-                            {errors.experience.message}
+                            {errors.experience.message as string}
                         </p>
                     )}
                 </div>
@@ -435,11 +468,17 @@ export const EmployerJobForm: React.FC = () => {
                 <div className="flex items-center gap-4 pt-4 flex-wrap">
                     <Button
                         type="submit"
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || !isDirty}
                         className="w-full md:w-auto bg-orange-600"
                     >
                         {isSubmitting && <Loader className="w-4 h-4 animate-spin" />}
-                        {isSubmitting ? "Saving..." : "Post Job"}
+                        {isEditMode
+                            ? isSubmitting
+                                ? "Saving..."
+                                : "Update Job"
+                            : isSubmitting
+                                ? "Saving..."
+                                : "Post Job"}
                     </Button>
                     {!isDirty && (
                         <p className="text-sm text-muted-foreground">
