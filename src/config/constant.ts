@@ -1,3 +1,13 @@
+import {
+  LayoutDashboard,
+  Search,
+  Briefcase,
+  Bookmark,
+  Settings,
+  Plus,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+
 export const SESSION_LIFETIME = 30 * 24 * 60 * 60;
 export const SESSION_REFRESH_RATE = SESSION_LIFETIME / 2;
 
@@ -43,3 +53,84 @@ export const MIN_EDUCATION = [
   "masters",
   "phd",
 ] as const;
+
+// =====================================================
+// NAVIGATION TYPES
+// =====================================================
+export interface NavItem {
+  name: string;
+  href: string;
+  icon: LucideIcon;
+  exact?: boolean;
+  badge?: number | "dynamic";
+}
+
+// =====================================================
+// APPLICANT DASHBOARD NAVIGATION
+// =====================================================
+/**
+ * Applicant Dashboard Navigation Items
+ * Based on folder structure: app/(applicants)/dashboard/
+ */
+export const applicantNavItems: NavItem[] = [
+  {
+    name: "Home",
+    href: "/dashboard/applicant",
+    icon: LayoutDashboard,
+    exact: true, // Exact match only for home
+  },
+  {
+    name: "Find Jobs",
+    href: "/dashboard/jobs",
+    icon: Search,
+  },
+  {
+    name: "Applied",
+    href: "/dashboard/applications",
+    icon: Briefcase,
+    badge: "dynamic", // Will show count of applied jobs
+  },
+  {
+    name: "Saved Jobs",
+    href: "/dashboard/saved-jobs",
+    icon: Bookmark,
+    badge: "dynamic", // Will show count of saved jobs
+  },
+  {
+    name: "Settings",
+    href: "/dashboard/settings",
+    icon: Settings,
+  },
+];
+
+// =====================================================
+// EMPLOYER DASHBOARD NAVIGATION
+// =====================================================
+/**
+ * Employer Dashboard Navigation Items
+ * Based on folder structure: app/employer-dashboard/
+ */
+export const employerNavItems: NavItem[] = [
+  {
+    name: "Home",
+    href: "/dashboard/employer",
+    icon: LayoutDashboard,
+    exact: true, // Exact match for dashboard home
+  },
+  {
+    name: "Create Job",
+    href: "/dashboard/employer/jobs/create",
+    icon: Plus,
+  },
+  {
+    name: "My Jobs",
+    href: "/dashboard/employer/jobs",
+    icon: Briefcase,
+    // Note: /jobs exact match chahiye but /jobs/[jobId]/edit allow karna hai
+  },
+  {
+    name: "Settings",
+    href: "/dashboard/employer/settings",
+    icon: Settings,
+  },
+];
