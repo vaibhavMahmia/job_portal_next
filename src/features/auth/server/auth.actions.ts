@@ -1,19 +1,22 @@
-"use server";
+'use server';
 
 import crypto from 'crypto';
-import { db } from "@/config/db";
-import { applicants, employers, users } from "@/drizzle/schema";
-import argon2 from "argon2";
-import { eq, or } from "drizzle-orm";
+import { db } from '@/config/db';
+import { applicants, employers, users } from '@/drizzle/schema';
+import argon2 from 'argon2';
+import { eq, or } from 'drizzle-orm';
 import {
-  LoginUserData,
-  loginUserSchema,
-  RegisterUserData,
-  registerUserSchema,
-} from "../auth.schema";
-import { createSessionAndSetCookies, invalidateSession } from "./use_cases/sessions";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+    LoginUserData,
+    loginUserSchema,
+    RegisterUserData,
+    registerUserSchema,
+} from '../auth.schema';
+import {
+    createSessionAndSetCookies,
+    invalidateSession,
+} from './use_cases/sessions';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
 // 👉 Server Actions in Next.js are special functions that run only on the server, not in the user’s browser.
 
@@ -28,86 +31,102 @@ import { redirect } from "next/navigation";
 // It provides methods like .get(), .set(), .append(), and .entries() — which you’re already using here.
 
 export const registerUserAction = async (data: RegisterUserData) => {
-  try {
-    const { data: validatedData, error } = registerUserSchema.safeParse(data);
-    if (error) return { status: "ERROR", message: error.issues[0].message };
-    // console.log(formData.get("name"));
-    const { name, userName, email, password, role } = validatedData;
+    try {
+        const { data: validatedData, error } =
+            registerUserSchema.safeParse(data);
+        if (error) return { status: 'ERROR', message: error.issues[0].message };
+        // console.log(formData.get("name"));
+        const { name, userName, email, password, role } = validatedData;
 
-    const [user] = await db.select().from(users).where(or(eq(users.email, email), eq(users.userName, userName)));
+        const [user] = await db
+            .select()
+            .from(users)
+            .where(or(eq(users.email, email), eq(users.userName, userName)));
 
-    if (user) {
-      if (user.email === email)
-        return { status: "ERROR", message: "Email Already Exists" };
-      else
+        if (user) {
+            if (user.email === email)
+                return { status: 'ERROR', message: 'Email Already Exists' };
+            else
+                return {
+                    status: 'ERROR',
+                    message: 'UseName Already Exists',
+                };
+        }
+
+        const hashPassword = await argon2.hash(password);
+
+        await db.transaction(async tx => {
+            const [result] = await db.insert(users).values({
+                name,
+                userName,
+                email,
+                password: hashPassword,
+                role,
+            });
+            if (role === 'applicant')
+                await db.insert(applicants).values({ id: result.insertId });
+            else await db.insert(employers).values({ id: result.insertId });
+
+            await createSessionAndSetCookies(result.insertId, tx);
+        });
+
         return {
-          status: "ERROR",
-          message: "UseName Already Exists",
+            status: 'SUCCESS',
+            message: 'Registration Completed Successfully',
+        };
+    } catch (error) {
+        return {
+            status: 'ERROR',
+            message: 'Unknown Error Occurred! Please Try Again Later',
         };
     }
-
-    const hashPassword = await argon2.hash(password);
-
-    await db.transaction(async (tx) => {
-      const [result] = await db.insert(users).values({ name, userName, email, password: hashPassword, role });
-      if (role === 'applicant') await db.insert(applicants).values({ id: result.insertId });
-      else await db.insert(employers).values({ id: result.insertId });
-
-      await createSessionAndSetCookies(result.insertId, tx);
-    });
-
-    return {
-      status: "SUCCESS",
-      message: "Registration Completed Successfully",
-    };
-  } catch (error) {
-    return {
-      status: "ERROR",
-      message: "Unknown Error Occurred! Please Try Again Later",
-    };
-  }
 };
 
-
 export const loginUserAction = async (data: LoginUserData) => {
-  try {
-    const { data: validatedData, error } = loginUserSchema.safeParse(data);
-    if (error) return { status: "ERROR", message: error.issues[0].message };
-    // console.log(formData.get("name"));
-    const { email, password } = validatedData;
-    // const { email, password } = data;
+    try {
+        const { data: validatedData, error } = loginUserSchema.safeParse(data);
+        if (error) return { status: 'ERROR', message: error.issues[0].message };
+        // console.log(formData.get("name"));
+        const { email, password } = validatedData;
+        // const { email, password } = data;
 
-    const [user] = await db.select().from(users).where(eq(users.email, email));
+        const [user] = await db
+            .select()
+            .from(users)
+            .where(eq(users.email, email));
 
-    if (!user)
-      return { status: "ERROR", message: "Invalid Email or Password" };
+        if (!user)
+            return { status: 'ERROR', message: 'Invalid Email or Password' };
 
-    const isValidPassword = await argon2.verify(user.password, password);
+        const isValidPassword = await argon2.verify(user.password, password);
 
-    if (!isValidPassword)
-      return { status: "ERROR", message: "Invalid Email or Password" };
+        if (!isValidPassword)
+            return { status: 'ERROR', message: 'Invalid Email or Password' };
 
-    await createSessionAndSetCookies(user.id);
-    return {
-      status: "SUCCESS",
-      message: "Login Successful",
-    };
-  } catch (error) {
-    return {
-      status: "ERROR",
-      message: "Unknown Error Occurred! Please Try Again Later",
-    };
-  }
+        await createSessionAndSetCookies(user.id);
+        return {
+            status: 'SUCCESS',
+            message: 'Login Successful',
+        };
+    } catch (error) {
+        return {
+            status: 'ERROR',
+            message: 'Unknown Error Occurred! Please Try Again Later',
+        };
+    }
 };
 
 export const logoutUserAction = async () => {
-  const cookieStore = await cookies();
-  const session = cookieStore.get('session')?.value;
-  if (!session) return redirect('/login');
+    const cookieStore = await cookies();
+    const session = cookieStore.get('session')?.value;
+    if (!session) return redirect('/login');
 
-  const hashedToken = crypto.createHash('sha-256').update(session).digest('hex');
-  await invalidateSession(hashedToken);
-  cookieStore.delete('session');
+    const hashedToken = crypto
+        .createHash('sha-256')
+        .update(session)
+        .digest('hex');
+    await invalidateSession(hashedToken);
+    cookieStore.delete('session');
 
-  return redirect('/login');
-}
+    return redirect('/login');
+};

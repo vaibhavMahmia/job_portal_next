@@ -1,4 +1,11 @@
-import { JOB_LEVEL, JOB_TYPE, MIN_EDUCATION, SALARY_CURRENCY, SALARY_PERIOD, WORK_TYPE } from "@/config/constant";
+import {
+    JOB_LEVEL,
+    JOB_TYPE,
+    MIN_EDUCATION,
+    SALARY_CURRENCY,
+    SALARY_PERIOD,
+    WORK_TYPE,
+} from '@/config/constant';
 
 export type JobType = (typeof JOB_TYPE)[number];
 export type WorkType = (typeof WORK_TYPE)[number];
