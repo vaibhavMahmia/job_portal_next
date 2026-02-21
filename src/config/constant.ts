@@ -81,7 +81,7 @@ export const applicantNavItems: NavItem[] = [
   },
   {
     name: "Find Jobs",
-    href: "/dashboard/jobs",
+    href: "/dashboard/applicant/jobs",
     icon: Search,
   },
   {
@@ -98,7 +98,7 @@ export const applicantNavItems: NavItem[] = [
   },
   {
     name: "Settings",
-    href: "/dashboard/settings",
+    href: "/dashboard/applicant/settings",
     icon: Settings,
   },
 ];
