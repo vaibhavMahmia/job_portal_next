@@ -22,7 +22,7 @@ const SettingsPage: React.FC = async () => {
                         employer.employerDetails.yearOfEstablishment?.toString(),
                     avatarUrl: employer.avatarUrl,
                     bannerImageUrl: employer.employerDetails.bannerImageUrl,
-                } as EmployerProfileData
+                } as Partial<EmployerProfileData>
             }
         />
     );

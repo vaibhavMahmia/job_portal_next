@@ -60,20 +60,20 @@ const RECENT_APPLICATIONS = [
 ];
 
 export const RecentApplications: React.FC = () => (
-    <div className="rounded-xl border border-gray-200 bg-gray-900 shadow-sm">
+    <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
         <div className="flex items-center justify-between border-b p-6">
-            <h3 className="font-semibold text-gray-200">Recently Applied</h3>
+            <h3 className="font-semibold text-gray-900">Recently Applied</h3>
             <Link
                 href="/dashboard/applied-jobs"
-                className="text-sm font-medium text-gray-400 hover:text-blue-500 flex items-center gap-1"
+                className="text-sm font-medium text-gray-500 hover:text-blue-600 flex items-center gap-1"
             >
                 View all <ArrowRight className="h-4 w-4" />
             </Link>
         </div>
 
-        <Table className="bg-gray-800">
+        <Table>
             <TableHeader>
-                <TableRow className="bg-gray-500/50 hover:bg-gray-500/50">
+                <TableRow className="bg-gray-50/50 hover:bg-gray-50/50">
                     <TableHead className="w-[40%] pl-6">Job</TableHead>
                     <TableHead>Date Applied</TableHead>
                     <TableHead>Status</TableHead>
@@ -81,19 +81,19 @@ export const RecentApplications: React.FC = () => (
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {RECENT_APPLICATIONS.map(job => (
-                    <TableRow key={job.id} className="hover:bg-gray-500">
+                {RECENT_APPLICATIONS.map((job) => (
+                    <TableRow key={job.id} className="hover:bg-gray-50">
                         {/* Job Info Column */}
                         <TableCell className="pl-6 py-4">
                             <div className="flex items-start gap-4">
                                 {/* Logo Placeholder */}
-                                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-gray-600 text-xs font-bold text-gray-200">
+                                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-xs font-bold text-gray-500">
                                     {job.company.slice(0, 2).toUpperCase()}
                                 </div>
 
                                 <div>
                                     <div className="flex items-center gap-2 mb-1">
-                                        <span className="font-semibold text-gray-200">
+                                        <span className="font-semibold text-gray-900">
                                             {job.title}
                                         </span>
                                         <Badge
@@ -102,10 +102,9 @@ export const RecentApplications: React.FC = () => (
                                             {job.type}
                                         </Badge>
                                     </div>
-                                    <div className="flex items-center gap-3 text-xs text-gray-300">
+                                    <div className="flex items-center gap-3 text-xs text-gray-500">
                                         <span className="flex items-center gap-1">
-                                            <MapPin className="h-3 w-3" />{' '}
-                                            {job.location}
+                                            <MapPin className="h-3 w-3" /> {job.location}
                                         </span>
                                         <span>{job.salary}</span>
                                     </div>
@@ -114,13 +113,13 @@ export const RecentApplications: React.FC = () => (
                         </TableCell>
 
                         {/* Date Column */}
-                        <TableCell className="text-sm text-gray-300">
+                        <TableCell className="text-sm text-gray-500">
                             {job.date}
                         </TableCell>
 
                         {/* Status Column */}
                         <TableCell>
-                            <div className="flex items-center gap-1.5 text-teal-600 font-medium text-sm">
+                            <div className="flex items-center gap-1.5 text-green-600 font-medium text-sm">
                                 <CheckCircle2 className="h-4 w-4" />
                                 {job.status}
                             </div>

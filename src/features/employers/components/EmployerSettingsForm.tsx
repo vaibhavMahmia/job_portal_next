@@ -40,17 +40,17 @@ import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { useDropzone } from '@uploadthing/react';
 
-export const EmployerSettingsForm: React.FC = ({
-    initialData,
-}: {
+interface EmployerSettingsFormProps {
     initialData?: Partial<EmployerProfileData>;
+}
+
+export const EmployerSettingsForm: React.FC<EmployerSettingsFormProps> = ({
+    initialData,
 }) => {
     const {
         register,
         handleSubmit,
         control,
-        setValue,
-        watch,
         formState: { errors, isDirty, isSubmitting },
     } = useForm<EmployerProfileData>({
         defaultValues: {
