@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
-@import "shadcn/tailwind.css";
+@import 'shadcn/tailwind.css';
 @plugin "@tailwindcss/typography";
 
 @import 'uploadthing/tw/v4';
@@ -8,10 +8,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-
-
 :root {
-
     --background: oklch(1 0 0);
 
     --foreground: oklch(0.148 0.004 228.8);
@@ -75,13 +72,9 @@
     --sidebar-border: oklch(0.925 0.005 214.3);
 
     --sidebar-ring: oklch(0.723 0.014 214.4);
-
 }
 
-
-
 .dark {
-
     --background: oklch(0.148 0.004 228.8);
 
     --foreground: oklch(0.987 0.002 197.1);
@@ -143,13 +136,9 @@
     --sidebar-border: oklch(1 0 0 / 10%);
 
     --sidebar-ring: oklch(0.56 0.021 213.5);
-
 }
 
-
-
 @theme inline {
-
     --font-sans: var(--font-sans);
 
     --color-sidebar-ring: var(--sidebar-ring);
@@ -227,29 +216,18 @@
     --radius-3xl: calc(var(--radius) * 2.2);
 
     --radius-4xl: calc(var(--radius) * 2.6);
-
 }
 
-
-
 @layer base {
-
-  * {
-
-    @apply border-border outline-ring/50;
-
+    * {
+        @apply border-border outline-ring/50;
     }
 
-  body {
-
-    @apply bg-background text-foreground;
-
+    body {
+        @apply bg-background text-foreground;
     }
 
-  html {
-
-    @apply font-sans;
-
+    html {
+        @apply font-sans;
     }
-
 }

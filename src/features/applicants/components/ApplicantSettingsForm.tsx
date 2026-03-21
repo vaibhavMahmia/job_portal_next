@@ -49,8 +49,9 @@ interface ApplicantSettingsFormProps {
     initialData: ApplicantProfileType | null;
 }
 
-
-export const ApplicantSettingsForm: React.FC<ApplicantSettingsFormProps> = ({ initialData }) => {
+export const ApplicantSettingsForm: React.FC<ApplicantSettingsFormProps> = ({
+    initialData,
+}) => {
     const {
         register,
         handleSubmit,
@@ -68,14 +69,14 @@ export const ApplicantSettingsForm: React.FC<ApplicantSettingsFormProps> = ({ in
     const onSubmit = async (data: ApplicantSettingsSchema) => {
         try {
             const res = await saveApplicantProfile(data);
-            if (res.status === "success") {
+            if (res.status === 'success') {
                 toast.success(res.message);
             } else {
                 toast.error(res.message);
             }
         } catch (error) {
-            toast.error("Something went wrong. Please try again.");
-            console.error("Form Submission Error:", error);
+            toast.error('Something went wrong. Please try again.');
+            console.error('Form Submission Error:', error);
         }
     };
 
@@ -104,13 +105,16 @@ export const ApplicantSettingsForm: React.FC<ApplicantSettingsFormProps> = ({ in
                                                     onChange={field.onChange}
                                                     className={cn(
                                                         fieldState.error &&
-                                                        "ring-1 ring-destructive/50 rounded-full",
-                                                        "h-34 w-34",
+                                                            'ring-1 ring-destructive/50 rounded-full',
+                                                        'h-34 w-34'
                                                     )}
                                                 />
                                                 {fieldState.error && (
                                                     <p className="text-sm text-destructive">
-                                                        {fieldState.error.message}
+                                                        {
+                                                            fieldState.error
+                                                                .message
+                                                        }
                                                     </p>
                                                 )}
                                             </div>
@@ -119,7 +123,10 @@ export const ApplicantSettingsForm: React.FC<ApplicantSettingsFormProps> = ({ in
                                 </div>
                             </div>
                             <div className="text-sm text-muted-foreground">
-                                <p>Max file size is 5MB. Minimum dimension: 150x150</p>
+                                <p>
+                                    Max file size is 5MB. Minimum dimension:
+                                    150x150
+                                </p>
                                 <p>Suitable files are .jpg and .png</p>
                             </div>
                         </div>
@@ -130,9 +137,9 @@ export const ApplicantSettingsForm: React.FC<ApplicantSettingsFormProps> = ({ in
                                 <div className="relative">
                                     <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                                     <Input
-                                        {...register("name")}
+                                        {...register('name')}
                                         placeholder="John Doe"
-                                        className={`pl-10 ${errors.name ? "border-destructive focus-visible:ring-destructive" : ""}`}
+                                        className={`pl-10 ${errors.name ? 'border-destructive focus-visible:ring-destructive' : ''}`}
                                     />
                                 </div>
                                 {errors.name && (
@@ -147,7 +154,7 @@ export const ApplicantSettingsForm: React.FC<ApplicantSettingsFormProps> = ({ in
                                 <div className="relative">
                                     <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                                     <Input
-                                        {...register("email")}
+                                        {...register('email')}
                                         placeholder="john@example.com"
                                         className="pl-10 bg-gray-50"
                                         readOnly
@@ -165,9 +172,9 @@ export const ApplicantSettingsForm: React.FC<ApplicantSettingsFormProps> = ({ in
                                 <div className="relative">
                                     <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                                     <Input
-                                        {...register("phoneNumber")}
+                                        {...register('phoneNumber')}
                                         placeholder="+1 234 567 890"
-                                        className={`pl-10 ${errors.phoneNumber ? "border-destructive focus-visible:ring-destructive" : ""}`}
+                                        className={`pl-10 ${errors.phoneNumber ? 'border-destructive focus-visible:ring-destructive' : ''}`}
                                     />
                                 </div>
                                 {errors.phoneNumber && (
@@ -182,9 +189,9 @@ export const ApplicantSettingsForm: React.FC<ApplicantSettingsFormProps> = ({ in
                                 <div className="relative">
                                     <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                                     <Input
-                                        {...register("location")}
+                                        {...register('location')}
                                         placeholder="New York, USA"
-                                        className={`pl-10 ${errors.location ? "border-destructive focus-visible:ring-destructive" : ""}`}
+                                        className={`pl-10 ${errors.location ? 'border-destructive focus-visible:ring-destructive' : ''}`}
                                     />
                                 </div>
                                 {errors.location && (
@@ -208,8 +215,8 @@ export const ApplicantSettingsForm: React.FC<ApplicantSettingsFormProps> = ({ in
                                 <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                                 <Input
                                     type="date"
-                                    {...register("dateOfBirth")}
-                                    className={`pl-10 ${errors.dateOfBirth ? "border-destructive focus-visible:ring-destructive" : ""}`}
+                                    {...register('dateOfBirth')}
+                                    className={`pl-10 ${errors.dateOfBirth ? 'border-destructive focus-visible:ring-destructive' : ''}`}
                                 />
                             </div>
                             {errors.dateOfBirth && (
@@ -224,9 +231,9 @@ export const ApplicantSettingsForm: React.FC<ApplicantSettingsFormProps> = ({ in
                             <div className="relative">
                                 <Flag className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                                 <Input
-                                    {...register("nationality")}
+                                    {...register('nationality')}
                                     placeholder="American"
-                                    className={`pl-10 ${errors.nationality ? "border-destructive focus-visible:ring-destructive" : ""}`}
+                                    className={`pl-10 ${errors.nationality ? 'border-destructive focus-visible:ring-destructive' : ''}`}
                                 />
                             </div>
                             {errors.nationality && (
@@ -242,20 +249,29 @@ export const ApplicantSettingsForm: React.FC<ApplicantSettingsFormProps> = ({ in
                                 name="gender"
                                 control={control}
                                 render={({ field }) => (
-                                    <Select onValueChange={field.onChange} value={field.value}>
+                                    <Select
+                                        onValueChange={field.onChange}
+                                        value={field.value}
+                                    >
                                         <SelectTrigger
                                             className={
                                                 errors.gender
-                                                    ? "border-destructive focus:ring-destructive"
-                                                    : ""
+                                                    ? 'border-destructive focus:ring-destructive'
+                                                    : ''
                                             }
                                         >
                                             <SelectValue placeholder="Select Gender" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="male">Male</SelectItem>
-                                            <SelectItem value="female">Female</SelectItem>
-                                            <SelectItem value="other">Other</SelectItem>
+                                            <SelectItem value="male">
+                                                Male
+                                            </SelectItem>
+                                            <SelectItem value="female">
+                                                Female
+                                            </SelectItem>
+                                            <SelectItem value="other">
+                                                Other
+                                            </SelectItem>
                                         </SelectContent>
                                     </Select>
                                 )}
@@ -273,20 +289,29 @@ export const ApplicantSettingsForm: React.FC<ApplicantSettingsFormProps> = ({ in
                                 name="maritalStatus"
                                 control={control}
                                 render={({ field }) => (
-                                    <Select onValueChange={field.onChange} value={field.value}>
+                                    <Select
+                                        onValueChange={field.onChange}
+                                        value={field.value}
+                                    >
                                         <SelectTrigger
                                             className={
                                                 errors.maritalStatus
-                                                    ? "border-destructive focus:ring-destructive"
-                                                    : ""
+                                                    ? 'border-destructive focus:ring-destructive'
+                                                    : ''
                                             }
                                         >
                                             <SelectValue placeholder="Select Status" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="single">Single</SelectItem>
-                                            <SelectItem value="married">Married</SelectItem>
-                                            <SelectItem value="divorced">Divorced</SelectItem>
+                                            <SelectItem value="single">
+                                                Single
+                                            </SelectItem>
+                                            <SelectItem value="married">
+                                                Married
+                                            </SelectItem>
+                                            <SelectItem value="divorced">
+                                                Divorced
+                                            </SelectItem>
                                         </SelectContent>
                                     </Select>
                                 )}
@@ -315,24 +340,35 @@ export const ApplicantSettingsForm: React.FC<ApplicantSettingsFormProps> = ({ in
                                     name="education"
                                     control={control}
                                     render={({ field }) => (
-                                        <Select onValueChange={field.onChange} value={field.value}>
+                                        <Select
+                                            onValueChange={field.onChange}
+                                            value={field.value}
+                                        >
                                             <SelectTrigger
                                                 className={
                                                     errors.education
-                                                        ? "border-destructive focus:ring-destructive"
-                                                        : ""
+                                                        ? 'border-destructive focus:ring-destructive'
+                                                        : ''
                                                 }
                                             >
                                                 <SelectValue placeholder="Select Education" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                <SelectItem value="none">None</SelectItem>
-                                                <SelectItem value="high school">High School</SelectItem>
+                                                <SelectItem value="none">
+                                                    None
+                                                </SelectItem>
+                                                <SelectItem value="high school">
+                                                    High School
+                                                </SelectItem>
                                                 <SelectItem value="undergraduate">
                                                     Undergraduate
                                                 </SelectItem>
-                                                <SelectItem value="masters">Masters</SelectItem>
-                                                <SelectItem value="phd">PhD</SelectItem>
+                                                <SelectItem value="masters">
+                                                    Masters
+                                                </SelectItem>
+                                                <SelectItem value="phd">
+                                                    PhD
+                                                </SelectItem>
                                             </SelectContent>
                                         </Select>
                                     )}
@@ -349,9 +385,9 @@ export const ApplicantSettingsForm: React.FC<ApplicantSettingsFormProps> = ({ in
                                 <div className="relative">
                                     <Briefcase className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                                     <Input
-                                        {...register("experience")}
+                                        {...register('experience')}
                                         placeholder="e.g. 5 Years"
-                                        className={`pl-10 ${errors.experience ? "border-destructive focus-visible:ring-destructive" : ""}`}
+                                        className={`pl-10 ${errors.experience ? 'border-destructive focus-visible:ring-destructive' : ''}`}
                                     />
                                 </div>
                                 {errors.experience && (
@@ -367,9 +403,9 @@ export const ApplicantSettingsForm: React.FC<ApplicantSettingsFormProps> = ({ in
                             <div className="relative">
                                 <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                                 <Input
-                                    {...register("websiteUrl")}
+                                    {...register('websiteUrl')}
                                     placeholder="https://..."
-                                    className={`pl-10 ${errors.websiteUrl ? "border-destructive focus-visible:ring-destructive" : ""}`}
+                                    className={`pl-10 ${errors.websiteUrl ? 'border-destructive focus-visible:ring-destructive' : ''}`}
                                 />
                             </div>
                             {errors.websiteUrl && (
@@ -386,7 +422,10 @@ export const ApplicantSettingsForm: React.FC<ApplicantSettingsFormProps> = ({ in
                                 render={({ field, fieldState }) => (
                                     <div className="space-y-2">
                                         <Label>Biography </Label>
-                                        <Tiptap content={field.value} onChange={field.onChange} />
+                                        <Tiptap
+                                            content={field.value}
+                                            onChange={field.onChange}
+                                        />
 
                                         {fieldState.error && (
                                             <p className="text-sm text-destructive">
@@ -414,11 +453,11 @@ export const ApplicantSettingsForm: React.FC<ApplicantSettingsFormProps> = ({ in
                                             onChange={(url, name, size) => {
                                                 // We update BOTH fields in React Hook Form when upload finishes
                                                 field.onChange(url);
-                                                setValue("resumeName", name, {
+                                                setValue('resumeName', name, {
                                                     shouldDirty: true,
                                                     shouldValidate: true,
                                                 });
-                                                setValue("resumeSize", size, {
+                                                setValue('resumeSize', size, {
                                                     shouldDirty: true,
                                                     shouldValidate: true,
                                                 });
@@ -443,19 +482,23 @@ export const ApplicantSettingsForm: React.FC<ApplicantSettingsFormProps> = ({ in
                         disabled={isSubmitting || !isDirty}
                         className="min-w-[150px]"
                     >
-                        {isSubmitting && <Loader className="w-4 h-4 mr-2 animate-spin" />}
+                        {isSubmitting && (
+                            <Loader className="w-4 h-4 mr-2 animate-spin" />
+                        )}
 
                         {isSubmitting
                             ? isUpdating
-                                ? "Updating..."
-                                : "Saving..."
+                                ? 'Updating...'
+                                : 'Saving...'
                             : isUpdating
-                                ? "Update Profile"
-                                : "Save Profile"}
+                              ? 'Update Profile'
+                              : 'Save Profile'}
                     </Button>
 
                     {!isDirty && (
-                        <p className="text-sm text-muted-foreground">No changes to save</p>
+                        <p className="text-sm text-muted-foreground">
+                            No changes to save
+                        </p>
                     )}
                 </div>
             </form>

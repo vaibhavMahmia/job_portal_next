@@ -63,7 +63,7 @@ export const JobFilters = () => {
         setJobLevel('');
         setWorkType('');
 
-        const pathname = '/dashboard/applicant/jobs';
+        const pathname = '/jobs';
         router.push(pathname); // Reset to base URL
     };
 

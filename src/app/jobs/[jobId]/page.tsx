@@ -1,25 +1,54 @@
-import React from 'react'
-import { notFound } from "next/navigation";
-import Image from "next/image";
-import { formatDistanceToNow } from "date-fns";
-import { MapPin, Clock, Building2 } from "lucide-react";
+import React from 'react';
+import { notFound } from 'next/navigation';
+import Image from 'next/image';
+import { formatDistanceToNow } from 'date-fns';
+import { MapPin, Clock, Building2 } from 'lucide-react';
 import { getJobById } from '@/features/employers/server/jobs/jobs.queries';
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { JobOverviewSidebar } from '@/features/applicants/jobs/components/JobOverviewSidebar';
+import Link from 'next/link';
+import { getCurrentUser } from '@/features/auth/server/auth.queries';
+import { db } from '@/config/db';
+import { jobApplications, resumes } from '@/drizzle/schema';
+import { and, eq } from 'drizzle-orm';
 
 interface JobIdProps {
     params: { jobId: string };
 }
 
 const JobId: React.FC<JobIdProps> = async ({ params }) => {
-    const jobId = parseInt(params.jobId);
-    if (isNaN(jobId)) return notFound();
+    const { jobId } = await params;
+    if (isNaN(Number(jobId))) return notFound();
 
-    const job = await getJobById(jobId);
-    console.log("job: ", job);
-
+    const job = await getJobById(Number(jobId));
     if (!job) return notFound();
+
+    // --- FETCH USER, APPLICATION STATUS, AND RESUMES ---
+    const user = await getCurrentUser();
+    let hasApplied = false;
+    let userResumes: { id: number; fileName: string }[] = [];
+
+    if (user) {
+        const existingApplication = await db
+            .select()
+            .from(jobApplications)
+            .where(
+                and(
+                    eq(jobApplications.jobId, Number(jobId)),
+                    eq(jobApplications.applicantId, user.id)
+                )
+            )
+            .limit(1);
+
+        hasApplied = existingApplication.length > 0;
+
+        // Fetch their resumes for the dropdown
+        userResumes = await db
+            .select({ id: resumes.id, fileName: resumes.fileName })
+            .from(resumes)
+            .where(eq(resumes.applicantId, user.id));
+    }
     return (
         <div className="container mx-auto max-w-6xl py-10 px-4 space-y-8">
             {/* --- HERO HEADER --- */}
@@ -30,7 +59,7 @@ const JobId: React.FC<JobIdProps> = async ({ params }) => {
                         {job.companyLogo ? (
                             <Image
                                 src={job.companyLogo}
-                                alt={job.companyName || "Company"}
+                                alt={job.companyName || 'Company'}
                                 fill
                                 className="object-cover"
                             />
@@ -54,12 +83,12 @@ const JobId: React.FC<JobIdProps> = async ({ params }) => {
                             <span className="hidden sm:inline">•</span>
                             <span className="flex items-center gap-1">
                                 <MapPin className="h-4 w-4" />
-                                {job.location || "Remote"}
+                                {job.location || 'Remote'}
                             </span>
                             <span className="hidden sm:inline">•</span>
                             <span className="flex items-center gap-1">
                                 <Clock className="h-4 w-4" />
-                                Posted{" "}
+                                Posted{' '}
                                 {formatDistanceToNow(new Date(job.createdAt), {
                                     addSuffix: true,
                                 })}
@@ -68,11 +97,25 @@ const JobId: React.FC<JobIdProps> = async ({ params }) => {
                     </div>
                 </div>
 
-                {/* Action Button */}
+                {/* -- INTERACTIVE ACTION BUTTON --- */}
                 <div className="flex gap-3 w-full md:w-auto mt-4 md:mt-0">
-                    <Button size="lg" className="w-full md:w-auto font-semibold">
-                        Apply Now
-                    </Button>
+                    {user ? (
+                        // <ApplyJobModal
+                        //     jobId={jobId}
+                        //     jobTitle={job.title}
+                        //     hasApplied={hasApplied}
+                        //     resumes={userResumes}
+                        // />
+                        <p>Model</p>
+                    ) : (
+                        <Button
+                            size="lg"
+                            className="w-full md:w-auto font-semibold"
+                            asChild
+                        >
+                            <Link href="/login">Login to Apply</Link>
+                        </Button>
+                    )}
                 </div>
             </div>
 
@@ -86,7 +129,9 @@ const JobId: React.FC<JobIdProps> = async ({ params }) => {
                         </h2>
                         <div
                             className="prose prose-blue max-w-none text-gray-600 leading-relaxed"
-                            dangerouslySetInnerHTML={{ __html: job.description }}
+                            dangerouslySetInnerHTML={{
+                                __html: job.description,
+                            }}
                         />
                         {/* <p> {job.description} </p> */}
                     </section>
@@ -98,8 +143,12 @@ const JobId: React.FC<JobIdProps> = async ({ params }) => {
                                 Skills & Technologies
                             </h3>
                             <div className="flex flex-wrap gap-2">
-                                {job.tags.split(",").map((tag) => (
-                                    <Badge key={tag} variant="secondary" className="px-3 py-1">
+                                {job.tags.split(',').map(tag => (
+                                    <Badge
+                                        key={tag}
+                                        variant="secondary"
+                                        className="px-3 py-1"
+                                    >
                                         {tag.trim()}
                                     </Badge>
                                 ))}
@@ -113,7 +162,7 @@ const JobId: React.FC<JobIdProps> = async ({ params }) => {
                 <JobOverviewSidebar job={job} />
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default JobId
+export default JobId;

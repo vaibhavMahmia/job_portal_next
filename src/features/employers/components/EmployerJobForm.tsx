@@ -571,7 +571,7 @@ export const EmployerJobForm: React.FC<EmployerJobFormProps> = ({
                         <Button
                             type="submit"
                             disabled={isSubmitting || !isDirty}
-                            className="w-full md:w-auto bg-orange-600"
+                            className="w-full md:w-auto"
                         >
                             {isSubmitting && (
                                 <Loader className="w-4 h-4 animate-spin" />

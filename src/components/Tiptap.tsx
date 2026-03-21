@@ -266,7 +266,7 @@ const ToolBar = ({ editor }: { editor: Editor }) => {
                     editor
                         .chain()
                         .focus()
-                        .toggleHighlight({ color: '#c77802' })
+                        .toggleHighlight({ color: '#fc0341' })
                         .run()
                 }
                 aria-label="Toggle highlight"

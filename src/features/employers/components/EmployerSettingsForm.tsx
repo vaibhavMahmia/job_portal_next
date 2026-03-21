@@ -329,7 +329,6 @@ export const EmployerSettingsForm: React.FC<EmployerSettingsFormProps> = ({
                         <Button
                             type="submit"
                             disabled={!isDirty || isSubmitting}
-                            className="bg-orange-600"
                         >
                             {isSubmitting && (
                                 <Loader className="w-4 h-4 animate-spin" />

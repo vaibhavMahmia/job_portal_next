@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation';
 const ApplicantSettingsPage: React.FC = async () => {
     const user = await getCurrentUser();
 
-    if (!user) return redirect("/login");
+    if (!user) return redirect('/login');
 
     const initialData = await getApplicantProfileData(user.id);
     return (
@@ -24,5 +24,5 @@ const ApplicantSettingsPage: React.FC = async () => {
             <ApplicantSettingsForm initialData={initialData} />
         </div>
     );
-}
+};
 export default ApplicantSettingsPage;

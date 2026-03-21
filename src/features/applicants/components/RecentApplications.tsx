@@ -81,7 +81,7 @@ export const RecentApplications: React.FC = () => (
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {RECENT_APPLICATIONS.map((job) => (
+                {RECENT_APPLICATIONS.map(job => (
                     <TableRow key={job.id} className="hover:bg-gray-50">
                         {/* Job Info Column */}
                         <TableCell className="pl-6 py-4">
@@ -104,7 +104,8 @@ export const RecentApplications: React.FC = () => (
                                     </div>
                                     <div className="flex items-center gap-3 text-xs text-gray-500">
                                         <span className="flex items-center gap-1">
-                                            <MapPin className="h-3 w-3" /> {job.location}
+                                            <MapPin className="h-3 w-3" />{' '}
+                                            {job.location}
                                         </span>
                                         <span>{job.salary}</span>
                                     </div>
