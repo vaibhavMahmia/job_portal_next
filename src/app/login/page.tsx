@@ -4,14 +4,14 @@ import { redirect } from 'next/navigation';
 import React from 'react';
 
 const LoginPage: React.FC = async () => {
-    const user = await getCurrentUser();
+  const user = await getCurrentUser();
 
-    if (user) {
-        if (user.role === 'applicant') return redirect('/dashboard/applicant');
-        if (user.role === 'employer') return redirect('/dashboard/employer');
-    }
+  if (user) {
+    if (user.role === 'applicant') return redirect('/dashboard/applicant');
+    if (user.role === 'employer') return redirect('/dashboard/employer');
+  }
 
-    return <LoginForm />;
+  return <LoginForm />;
 };
 
 export default LoginPage;
